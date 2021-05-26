@@ -1,0 +1,7 @@
+bases:
+- ../../uat
+
+namespace: production
+
+patchesStrategicMerge:
+- scale.yaml
