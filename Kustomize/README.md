@@ -26,17 +26,8 @@ Execute the commands below from a bash command shell. Assure you are in the dire
 # Apply deployment to the cluster
 kubectl apply -f 01-pod-storage.yaml
 
-# List the pod that was created
+# List the pod that was created, make sure they are created and running
 kubectl get pods
-
-# Setup port forwarding so you can browse to the running container.
-# Replace '[pod-name]' with the name of your pod.
-kubectl port-forward [pod-name] 8080:80
-
-# Open browser to localhost:8080.
-# Observe that the response is the standard 'Welcome to nginx!' response.
-
-# Press Ctrl-c to terminate the port forwarding.
 
 # Delete the deployment
 kubectl delete -f 01-pod-storage.yaml
@@ -74,9 +65,13 @@ kubectl create ns uat
 kubectl get ns
 
 # Create a directory to hold your base image
-MD UAT
+mkdir uat
 
 # Copy the 01-pod-storage.yaml to this directory. This will be our "base"
+
+
+# Navigate to the overlays directory
+cd uat
 
 # Create a new yaml file named kustomization.yaml and add the below
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -88,7 +83,8 @@ resources:
   - 01-pod-storage.yaml
 
 
-
+# Return to root of prodject
+cd ..
 
 # Confirm you are in the root of your project (one directory above the UAT folder)
 # Test/Debug you customization, you should see UAT as the namespace
@@ -139,13 +135,16 @@ kubectl create ns production
 kubectl get ns
 
 # Create a directory to hold overlays
-MD overlays
+mkdir overlays
 
 # Navigate to the overlays directory
-CD overlays
+cd overlays
 
 # Create a Production folder
-MD Production
+mkdir production
+
+# Navigate to the Production folder
+cd production
 
 # Create a new yaml named kustomization.yaml
 bases:
