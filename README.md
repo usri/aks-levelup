@@ -20,7 +20,7 @@ The agenda for this workshop is as follows:
 | Time (CST) | Topic |
 | --- | --- |
 | 9:00 AM | Workshop Kickoff |
-| 9:15 AM | Storage - Persistent Volumes, Claims, & Storage Classes |
+| 9:15 AM | [Storage - Persistent Volumes, Claims, & Storage Classes](./storage/README.md) |
 | 10:30 AM | Kustomize |
 | TODO | Break |
 | TODO | Service mesh - Istio |
