@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: file-storage-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamic-shared-storage
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: big-data-producer
+        image: ubuntu:latest
+        # Generate a 500MB file in the file share.
+        command: [ 'sh', '-c', 'dd if=dev/zero of=/usr/share/$HOSTNAME.txt count=1024 bs=524288 && tail -f /dev/null' ]
+        volumeMounts:
+          - name: data
+            mountPath: /usr/share
+            readOnly: false
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: file-storage-claim
+
