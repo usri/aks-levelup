@@ -11,7 +11,7 @@ A  [service mesh](https://docs.microsoft.com/dotnet/architecture/cloud-native/re
 - Policy enforcement
 - Observability
 
-A service mesh decouples infrastructure capabilities from the application. It moves infrastructure plumbing from the application services to a a *proxy* container that is injected alongside each of the application service containers. This side-by-side architecture is referred to as a [sidecar](https://docs.microsoft.com/azure/architecture/patterns/sidecar). Although a separate component, a sidecar proxy is *loosely coupled* (or linked) to its corresponding service - the sidecar is created with the application service and shares its lifecycle.
+A service mesh decouples infrastructure capabilities from the application. It moves infrastructure plumbing from the application services to a *proxy* container that is injected alongside each of the application service containers. This side-by-side architecture is referred to as a [sidecar](https://docs.microsoft.com/azure/architecture/patterns/sidecar). Although a separate component, a sidecar proxy is *loosely coupled* (or linked) to its corresponding service - the sidecar is created with the application service and shares its lifecycle.
 
 Figure 1 shows an example of a service mesh architecture.
 
@@ -45,9 +45,9 @@ The installation involves several steps. The instructions presented are a subset
 
 ### Install the Istio client binary
 
-You'll start by installing the *Istioctl CLI* into your client. Similar to the Kubernetes, *kubectl* CLI, istioctl is needed to install and manage Istio within an AKS cluster.
+You will start by installing the *Istioctl CLI* into your client. Similar to the Kubernetes, *kubectl* CLI, istioctl may be used to install and manage Istio within an AKS cluster.
 
-To complete this lab, you'll use the Azure Cloud Shell. It's an interactive, authenticated, browser-accessible shell for managing Azure resources, including AKS. Conveniently, it's built into the Azure portal and is preloaded with many of the Azure libraries you'll need. It provides both a Bash and PowerShell CLI experience.
+To complete this lab, you'll use the Azure Cloud Shell. It's an interactive, authenticated, browser-accessible shell for managing Azure resources, including AKS. Conveniently, it's built into the Azure portal and is preloaded with many of the Azure libraries you will need. It provides both a Bash and PowerShell CLI experience.
 
 Logon to the [Azure Portal](https://ms.portal.azure.com/). Once loaded, open up an Azure Cloud Shell session by clicking on the Cloud Shell icon in the top navigation menu as shown in figure 2.
 
@@ -67,7 +67,7 @@ The binary runs on the client machine enabling you to install and manage Istio i
 
 The following commands will download and install the Istioctl client binary into your CloudShell instance. It'll be available immediately (in the current shell) and permanently (across shell restarts) via your PATH.
 
-Use the following command to load identity credentials for your AKS cluster. You'll need to provide your resource group and cluster name.
+Use the following command to load identity credentials for your AKS cluster. You will need to provide your resource group and cluster name.
 
 ```Bash
 az aks get-credentials --resource-group RG-NAME --name CLUSTERNAME
@@ -95,7 +95,7 @@ cd istio-X.X.X # Replace X.X.X. with the Istio version number
 export PATH=$PWD/bin:$PATH
 ```
 
-Next, you'll use the Istioctl CLI to install Istio into your AKD cluster:
+Next, you will use the Istioctl CLI to install Istio into your AKS cluster:
 
 ``` bash
 istioctl install
@@ -336,6 +336,16 @@ ratings-app       Active   90d     istio-injection=enabled
 
 Note the *istio-injection=enabled* label in the bookinfo namespace.
 
+Clone the _book info_ sample application.
+
+```bash
+# Clone the istio repo, which includes the sample application
+git clone https://github.com/istio/istio.git
+
+# Naviagate into the istio folder
+cd istio
+```
+
 Next, deploy the BookInfo application.
 
 > Remember to add the *--namespace bookinfo* to end of each command!
@@ -447,7 +457,7 @@ Finally, copy and paste the $GATEWAY_URL value into Notepad on your computer. Yo
 
 The traffic routing features of Istio enables you to specify routing rules that control traffic flow between frontend APIs and backend services. Included are service-level properties that support A/B testing, canary rollouts, and staged rollouts with percentage-based traffic splits. It also provides built-in failure recovery features to make your application more robust against failures of dependent services or the network.
 
-Two key features for traffic routing are Istio *destination rules* and *virtual services*.
+Two resources for traffic routing are Istio *destination rules* and *virtual services*.
 ## Apply destination rules
 
 Before you can use Istio to control routing to a specific version of the BookInfo application, you'll need to define the available versions, called subsets, using Istio destination rules.
