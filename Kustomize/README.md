@@ -2,21 +2,19 @@
 
 ## Introduction
 
-
 Kubernetes relies on YAML for deployment definitions. As you applications grow and more services, application and namespaces are added, these YAML definitions can become hard to manage. Add several different environments such as UAT and Production and DevOps, mistakes to your cluster are inevitable. 
 
 [kustomize](https://kustomize.io/#overview) is built-in to kubectl and assists in managing templates.
 
-
-The main concepts in Kustomize are "bases" and "overlays" ([terms](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/)). The idea is to have a "base" desired state such as "UAT (User Acceptance Testing)" where the YMAL might include a small node pool and ingress. Then you might have a "production overlay" where you have a large cluster in a different namespace.
+The main concepts in Kustomize are "base" and "overlays" ([terms](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/)). The idea is to have a "base" desired state such as "UAT (User Acceptance Testing)" where the YMAL might include a small node pool and ingress. Built on top of the base template, you can then create multiple overlay templates that extend or modify the base template for a specific environment. For example, you might have a "production overlay" where you have a large cluster in a different namespace.
 
 This module will guide you through the tutorial below to give you hands-on experience configuring and using Kustomize to templatize a YAML workload.
 
-
 ## Tutorial: Redeploy ngnix
+
 _(5 minutes)_
 
-In this tutorial we will deploy a simple YAML from the [PVC](https://github.com/rickrain/k8s-volumes/blob/main/README.md#tutorial-pod-storage) demo. This is a simple NGNIX container with no customizations. Make sure you have the [01-pod-storage.yaml](https://github.com/rickrain/k8s-volumes/blob/main/01-pod-storage.yaml).
+In this tutorial, you will deploy a simple YAML from the [PVC](https://github.com/rickrain/k8s-volumes/blob/main/README.md#tutorial-pod-storage) demo. The workload is a simple NGNIX container with no customizations. Make sure you have the [01-pod-storage.yaml](https://github.com/rickrain/k8s-volumes/blob/main/01-pod-storage.yaml).
 
 ### Step-by-step instructions
 
@@ -34,16 +32,19 @@ kubectl delete -f 01-pod-storage.yaml
 ```
 
 ### Summary
+
 In this tutorial, we redeployed the 01-pod-storage as our baseline for our kustomize project.
 
-## Tutorial: Create UAT
+## Tutorial: Create a UAT environment template
+
 _(15 minutes)_
 
-In this tutorial you will see how a kustomize customization allows us to easily manage namespaces and other properties. Most customizations start with a "base" which mostly would be used in a UAT environment. 
+In this tutorial you will see how a kustomize customization allows us to easily manage namespaces and other properties. Most customizations start with a "base" which mostly would be used in a UAT environment.
 
 A quick word on [namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/). Namespaces are commonly used to isolate deployment and services. It is a recommended practice to isolate your workloads by namespace.
 
 The basics steps include:
+
 - Move your base template to a directory
 - Create a kustomization.yaml file to contain changes you wish to make
 - Deploy to file or cluster
@@ -104,18 +105,19 @@ kubectl get pods
 # Look for pods in the UAT namespace
 # Pods are now visable, port forward if you would like to connect to pods
 kubectl get pods -n uat
-
 ```
 
 ### Summary
-In this step you learned about isolating deployments in their own namespaces with Kustomize. We also show a few ways to display the customized templates, screen and to file. We also deployed the customizations directly to the cluster.
 
-## Tutorial: Create production template, namespace and scale
+In this step you learned about isolating deployments in their own namespaces with Kustomize. You extended the base template by creating an overlay template with a different namesapce, UAT. You also learned how to display and persist the customized template. You also deployed the customization directly to the cluster.
+
+## Tutorial: Create production environment template, namespace and scale
+
 _(15 minutes)_
 
-In this step, you will create a production namespace, deploy and scale the base.
+In this step, you will create a production namespace, deploy and scale the base template.
 
-The basics steps include:
+The steps include:
 
 - Create an overlays directory
 - Create a kustomization.yaml file to contain the changes
@@ -144,7 +146,8 @@ mkdir production
 # Navigate to the Production folder
 cd production
 
-# Create a new yaml named kustomization.yaml
+# Create a kustomization file named kustomization.yaml. Add the following directives to it:
+# You can also use the Visual Studio Code plug built-in to CloudShell. Simply type: "Code ."
 bases:
 - ../../uat
 
@@ -153,10 +156,7 @@ namespace: production
 patchesStrategicMerge:
 - scale.yaml
 
-
-
-
-# Create a new yaml named scale.yaml
+# Create a new yaml named scale.yaml. Add the following directives:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -164,14 +164,11 @@ metadata:
 spec:
   replicas: 10
 
-
-
-
 # Navigate back to root
 cd..
 cd..
 
-# Write customizations to screen
+# Write customizations to screen. Note that the number of replicas are 10 and the namespace is production.
 kubectl kustomize overlays/production
 
 # Deploy to cluster
@@ -183,7 +180,5 @@ kubectl get pods -n production
 ```
 
 ### Summary
-In this tutorial, we created a new production overlay and merged in a scale.yaml to scale our cluster. UAT and Production are usually similar but different in scale. kustomize helps keep the namespaces and yamls manageable. 
 
-
-
+In this tutorial, you created a new production overlay template and merged it into a scale.yaml template to scale the cluster. UAT and Production are usually similar but different in scale. kustomize helps keep the namespaces and yamls more manageable.
