@@ -267,10 +267,10 @@ az login
 
 # Create a storage account
 STG_ACCOUNT_NAME=staticfileshare$RANDOM
-az storage account create --resource-group $NODE_RG --name $STG_ACCOUNT_NAME --sku Premium_LRS --kind FileStorage
+az storage account create --resource-group $AKS_WORKSHOP_RG --name $STG_ACCOUNT_NAME --sku Premium_LRS --kind FileStorage
 
 # Create a file share in the storage account
-STG_CONN_STRING=$(az storage account show-connection-string --name $STG_ACCOUNT_NAME --resource-group $NODE_RG --output tsv)
+STG_CONN_STRING=$(az storage account show-connection-string --name $STG_ACCOUNT_NAME --resource-group $AKS_WORKSHOP_RG --output tsv)
 az storage share create --name data --connection-string $STG_CONN_STRING --output tsv
 
 # (optional) Use the Azure portal to view the storage account and the 'data' file share.
@@ -349,7 +349,7 @@ kubectl get svc -w
 # from the node the pod is running on.
 
 # Scale out the replicas to 20 so that you get pods spread across the two nodes.
-kubectl scale deployment nginx-deployment-03 --replicas=20
+kubectl scale deployment shared-storage --replicas=20
 
 # Show all the pods *and* the node that each pod is running on.
 # Again, just like in the previous tutorial, all 20 pods are running.  That is because the volume mount
@@ -377,7 +377,7 @@ kubectl delete -f ./04-shared-storage.yaml
 kubectl delete secret azure-storage
 
 # Delete the storage account
-az storage account delete --name $STG_ACCOUNT_NAME --resource-group $NODE_RG --yes
+az storage account delete --name $STG_ACCOUNT_NAME --resource-group $AKS_WORKSHOP_RG --yes
 ```
 
 ### Summary
@@ -429,6 +429,7 @@ kubectl get svc -w
 
 # Open browser to public IP address - observe the response, which is the hostname
 # from the node the pod is running on.
+# NOTE: This could take a minute or two to respond
 
 # Delete the deployment
 kubectl delete -f ./05-shared-storage.yaml
@@ -477,35 +478,39 @@ kubectl get pods -w
 kubectl scale deployment dynamic-shared-storage --replicas=11
 
 # Get a list of all the pods and wait for the status to change.
-# Eventually, you will see one of the pods 
+# Eventually, you will see one of the pods with status of 'Error'
 kubectl get pods -w
 
 # Observe the additional files getting created in the file share, eventually using up all the space available.
 
 # Observe that one of the pods is going to fail.  This is because the file share ran out of space.
 # show the error
-k logs [failed pod name]
+kubectl logs [failed pod name]
 
 # Need to expand the volume, which we can do because the azurefile storage class supports volume expansion by default.
 # Show this in the yaml
 
 # edit the pvc to increase the size from 5GB to 8GB
-k edit pvc file-storage-claim
+kubectl edit pvc file-storage-claim
 # This will open VIM editor
-# move cursor on top of 5 in the spec.  Type 'r8', then ':wq' to save the change.
+# move cursor on top of '5' in the 'storage' section spec.  Type 'r8', then ':wq' to save the change.
 # Now the pvc has been expanded to 8GB
 
 # Delete the failed pod 
-k delete pod [failed pod name]
+kubectl delete pod [failed pod name]
 
-# Notice that Kubernetes scheduled a new pod so your replicaset is at 11.  This time, it doesn't fail.
+# Notice that Kubernetes scheduled a new pod so your replicaset is at 11 and all the pods are running.  This time, it doesn't fail.
+kubectl get rs
+kubectl get pods -o wide
+
 # observe the new file created in the share
 
 # Scale out the replicas to 14.
 kubectl scale deployment dynamic-shared-storage --replicas=14
 
-# Observe the files created in the share and all the pods are 'Running'.  This is because we haven't exceeded the
-# new capacity of 8GB.
+# Observe the files created in the share and all the pods are 'Running'.  
+#This is because we haven't exceeded the new capacity of 8GB.
+kubectl get pods
 
 # Delete the deployment
 kubectl delete -f ./06-volume-expansion.yaml
