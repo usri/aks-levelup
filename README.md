@@ -22,8 +22,8 @@ The agenda for this workshop is as follows:
 | 9:00 AM | Workshop Kickoff |
 | 9:15 AM | [Storage - Persistent Volumes, Claims, & Storage Classes](./storage/README.md) |
 | 10:30 AM | Kustomize |
-| TODO | Break |
-| TODO | Service mesh - Istio |
+| 10:45 AM | Break |
+| 11:00 AM | [Service mesh - Istio ](./ServiceMesh/readme.md) |
 | TODO | Security |
 | TODO | End of workshop |
 
