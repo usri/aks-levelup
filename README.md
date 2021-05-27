@@ -12,7 +12,7 @@ The following are required to participate in this workshop.
 
 - Azure Subscription (commercial or government)
 - An AKS instance resulting from the [Azure Kubernetes Service Workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/).
-  - Some of the modules below will extend your existing AKS instance.
+  - The _Security_ module will extend your existing fruit smoothies rating application.
 ## Agenda
 
 The agenda for this workshop is as follows:
@@ -20,16 +20,14 @@ The agenda for this workshop is as follows:
 | Time (CST) | Topic |
 | --- | --- |
 | 9:00 AM | Workshop Kickoff |
-| 9:15 AM | [Storage - Persistent Volumes, Claims, & Storage Classes](./storage/README.md) |
-| 10:30 AM | Kustomize |
-| 10:45 AM | Break |
-| 11:00 AM | [Service mesh - Istio ](./ServceMesh/readme.md) |
-| TODO | Security |
-| TODO | End of workshop |
+| 9:10 AM | [Storage - Persistent Volumes, Claims, & Storage Classes](./storage/README.md) |
+| 10:25 AM | [Kustomize](./kustomize/readme.md) |
+| 11:15 AM | Break |
+| 11:25 AM | [Service mesh - Istio ](./ServceMesh/readme.md) |
+| 12:15 PM | [Security](./security/readme.md) |
+| 1:30 PM | End of workshop |
 
 
 ## Support
 
-During the live presentation of this workshop a team of procotors are available to support you and answer questions.  Instructions on how to engage with the proctors during the live event are below.
-
-TODO...
+During the live presentation of this workshop a team of procotors are available to support you and answer questions.  Instructions on how to engage with the proctors during the live event will be conveyed at that time.
