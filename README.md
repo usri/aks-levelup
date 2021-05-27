@@ -13,6 +13,21 @@ The following are required to participate in this workshop.
 - Azure Subscription (commercial or government)
 - An AKS instance resulting from the [Azure Kubernetes Service Workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/).
   - The _Security_ module will extend your existing fruit smoothies rating application.
+
+If you do not have an AKS instance as mentioned above, then you can still participate in the 1st three topics with another AKS instance. If you need to create a new AKS instance, then you can do so quickly using the following commands:
+
+```bash
+# Sign-in to your subscription if you're not already signed-in.
+az login
+
+# Create the resource group for AKS
+az group create --name levelup-rg --location eastus
+
+# Creat the AKS cluster
+az aks create --resource-group levelup-rg --name levelup-aks --node-count 2 --generate-ssh_keys
+```
+
+
 ## Agenda
 
 The agenda for this workshop is as follows:
