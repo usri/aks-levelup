@@ -33,10 +33,8 @@ kubectl get pods
 kubectl delete -f 01-pod-storage.yaml
 ```
 
-
 ### Summary
 In this tutorial, we redeployed the 01-pod-storage as our baseline for our kustomize project.
-
 
 ## Tutorial: Create UAT
 _(15 minutes)_
@@ -45,12 +43,10 @@ In this tutorial you will see how a kustomize customization allows us to easily 
 
 A quick word on [namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/). Namespaces are commonly used to isolate deployment and services. It is a recommended practice to isolate your workloads by namespace.
 
-
 The basics steps include:
 - Move your base template to a directory
-- Create a kustomization.yaml file to contain the changes
+- Create a kustomization.yaml file to contain changes you wish to make
 - Deploy to file or cluster
-
 
 ```bash
 # View your current namespaces
@@ -68,12 +64,17 @@ kubectl get ns
 mkdir uat
 
 # Copy the 01-pod-storage.yaml to this directory. This will be our "base"
-
+cp 01-pod-storage.yaml uat
 
 # Navigate to the overlays directory
 cd uat
 
 # Create a new yaml file named kustomization.yaml and add the below
+cat > kustomization.yaml
+
+# Add the following directives to the new file. Note that type, or kind,
+# is a Kustomization. The change you wish to make is renaming the namespace
+# in the new deployment to UAT.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
@@ -82,21 +83,21 @@ namespace: uat
 resources:
   - 01-pod-storage.yaml
 
-
-# Return to root of prodject
+# use &lt;ctrl&gt;&lt;D&lt; to save and exit the new file
+# Return to root of project
 cd ..
 
 # Confirm you are in the root of your project (one directory above the UAT folder)
 # Test/Debug you customization, you should see UAT as the namespace
 kubectl kustomize uat
 
-# Write to a ymal file. This could be deoployed.
+# Write to a yaml file. This file can be deployed.
 kubectl kustomize uat > out.yaml
 
 # Apply directly to the cluster (note the -k option)
 kubectl apply -k uat/
 
-# Look for pods
+# Look for pods in the root namespace
 # None should be visible
 kubectl get pods
 
@@ -109,16 +110,13 @@ kubectl get pods -n uat
 ### Summary
 In this step you learned about isolating deployments in their own namespaces with Kustomize. We also show a few ways to display the customized templates, screen and to file. We also deployed the customizations directly to the cluster.
 
-
-
 ## Tutorial: Create production template, namespace and scale
 _(15 minutes)_
 
-
-In this step we will create a production namespace, deploy and scale the base.
-
+In this step, you will create a production namespace, deploy and scale the base.
 
 The basics steps include:
+
 - Create an overlays directory
 - Create a kustomization.yaml file to contain the changes
 - Deploy to file or cluster
