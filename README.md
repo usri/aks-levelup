@@ -24,7 +24,10 @@ az login
 az group create --name levelup-rg --location eastus
 
 # Creat the AKS cluster
-az aks create --resource-group levelup-rg --name levelup-aks --node-count 2 --generate-ssh_keys
+az aks create --resource-group levelup-rg --name levelup-aks --node-count 2 --generate-ssh-keys
+
+# Merge AKS credentials into ./kube/config, so you can run kubectl commands.
+az aks get-credentials --resource-group levelup-rg --name levelup-aks
 ```
 
 
