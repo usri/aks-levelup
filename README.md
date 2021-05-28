@@ -33,6 +33,11 @@ az aks get-credentials --resource-group levelup-rg --name levelup-aks
 git clone https://github.com/usri/aks-levelup.git
 ```
 
+## We want your feedback!
+
+Please provide some feedback on this workshop here:
+
+[FY21 Q4 LevelUP Learner Survey – Advanced AKS May 2021](https://forms.office.com/pages/responsepage.aspx?id=v4j5cvGGr0GRqy180BHbRzbGReTz_QJAsEsSBGtDGzFUOUQ0SkZaUExUSEJGTDFBT1VZVEpDSlJRVy4u)
 
 ## Agenda
 
@@ -53,3 +58,25 @@ The agenda for this workshop is as follows:
 ## Support
 
 During the live presentation of this workshop a team of procotors are available to support you and answer questions.  Instructions on how to engage with the proctors during the live event will be conveyed at that time.
+
+**Presenters:**
+
+Rick Rainey
+
+Rob Vettor
+
+Dan Biscup
+
+Eldon Gormsen
+
+Ayobami Ayodewji
+
+**Coaches:**
+
+Chad Kittel
+
+Jonathan Wang
+
+Greg Roe
+
+Mark Kizhnerman
