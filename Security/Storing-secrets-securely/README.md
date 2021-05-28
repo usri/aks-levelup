@@ -595,9 +595,9 @@ As mentioned at the begining of this section there are times when we cannot modi
 
     <img src="pictures/secret-deleted-automatically.PNG" alt="key creation" style="zoom:50%;" />
 
-### Bringing it all together
+### Bringing it all together: Challenge
 
-Now that we have our secret securely stored in keyvault and syncing with our Kubernetes secrets. lets deploy the rest of the microservice to ensure everything works as expected. We begin by deleting the objects in the ratingsapp namespace since we dont need them anymore
+Now that we have our secret securely stored in keyvault and syncing with our Kubernetes secrets, try and deploy the rest of the microservice to ensure everything works as expected. We begin by deleting the objects in the ratingsapp namespace since we dont need them anymore. **Here are some tips**:
 
 ```bash
 kubectl delete -f ratings-web-service.yaml -n ratingsapp
@@ -609,7 +609,7 @@ kubectl delete -f ratings-api-service.yaml -n ratingsapp
 helm uninstall ratings --namespace ratingsapp
 ```
 
-1. We create the mongodb pods using helm like we did during the workshop but this time in the default namespace
+1. Create the mongodb pods using helm like we did during the workshop but this time in the default namespace
 
    ```bash
    helm install ratings bitnami/mongodb \
@@ -622,7 +622,7 @@ helm uninstall ratings --namespace ratingsapp
    kubectl get pods -w
    ```
 
-3. Next we create the ratings-api and ratings-web pods
+3. Create the ratings-api and ratings-web pods
 
    ```bash
    kubectl apply -f ratings-api-deployment-kv-env.yaml
@@ -636,13 +636,7 @@ helm uninstall ratings --namespace ratingsapp
    kubectl apply -f ratings-api-service.yaml
    ```
 
-5. Finally we view the services so that we can get the public ip of the web service
-
-   ```
-   kubectl get services
-   ```
-
-6. Copy the external IP from the result and paste it in your browser and you should have your fruit smoothie app running
+5. Get the external IP and you should have your fruit smoothie app running with secrets being pulled from keyvault
 
    <img src="pictures/fs-live.PNG" alt="create user group" style="zoom:50%;" />
 
