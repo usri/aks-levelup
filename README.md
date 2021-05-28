@@ -28,6 +28,9 @@ az aks create --resource-group levelup-rg --name levelup-aks --node-count 2 --ge
 
 # Merge AKS credentials into ./kube/config, so you can run kubectl commands.
 az aks get-credentials --resource-group levelup-rg --name levelup-aks
+
+# Clone the github repo with the needed files
+git clone https://github.com/usri/aks-levelup.git
 ```
 
 
