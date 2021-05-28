@@ -474,7 +474,7 @@ We begin by creating a new SecretProviderClass in your cluster
 3. Next we apply the SecretProviderClass in the default namespace since the CSI driver only works in that namespace
 
    ```bash
-   kubectl apply -f secretproviderclassfile.yaml
+   kubectl apply -f secretproviderclass-file.yaml
    ```
 
    
@@ -483,9 +483,8 @@ We begin by creating a new SecretProviderClass in your cluster
 
    ```bash
    kubectl delete -f ratings-api-deployment.yaml -n ratingsapp
-   kubectl delete -f ratings-api-deployment-files.yaml -n ratingsapp
    ```
-
+   
 5. Now modify the manifest file by adding your acr name save it
 
    ```
@@ -500,6 +499,20 @@ We begin by creating a new SecretProviderClass in your cluster
 
    your deployment would never get to a ready state because the mongodb deployment hasnt been added to this namespace here but you can still exec into the container and get the secret as shown below
 
+   ```
+   kubectl exec -it <pod name> -- sh
+   ```
+   
+   ```
+   cd /mnt/secrets-store
+   ```
+   
+   ```
+   cat k8s-secret-demo
+   ```
+   
+   
+   
    <img src="pictures/got-kv-secret.PNG" alt="key creation" style="zoom:50%;" />
 
 
@@ -534,7 +547,11 @@ As mentioned at the begining of this section there are times when we cannot modi
 
    <img src="pictures/secret-p-class-show.PNG" alt="key creation" style="zoom:50%;" />
 
-5. Next we deploy our ratings-api again using the file you can find at *ratings-api-deployment-kv-env.yaml*
+5. Next we deploy our ratings-api again using the file you can find at *ratings-api-deployment-kv-env.yaml*. Edit the file by filling in your correct acr name
+
+   ```
+   code ratings-api-deployment-kv-env.yaml
+   ```
 
    ```bash
    kubectl apply -f ratings-api-deployment-kv-env.yaml
@@ -549,10 +566,10 @@ As mentioned at the begining of this section there are times when we cannot modi
 7. Exec into your pod to see if you can access the environment variable
 
    ```bash
-   kubectl exec -it ratings-api-kv-env-5995f7df9f-6rnzt -- sh
+   kubectl exec -it ratings-api-kv-env-cbf56cbf5-vtrmf -- sh
    ```
 
-8. Enter the code below to see your secret. You will see the secret you stored in your key vault. This is ready for your app to use. Type exit to exit the pod
+8. Enter the code below to see your secret. You will see the secret you stored in your key vault. This is ready for your app to use. Type *exit* to exit the pod
 
    ```
    echo $MONGODB_URI
@@ -566,23 +583,30 @@ As mentioned at the begining of this section there are times when we cannot modi
    kubectl get secrets
    ```
 
-10. You can see that the secret gets automatically deleted when there are no pods using the secret
+10. You can see that the secret gets automatically deleted when there are no pods using the secret. This provides additional security.
 
     ```bash
     kubectl delete -f ratings-api-deployment-kv-env.yaml
+    ```
+
+    ```
+    kubectl get secrets
     ```
 
     <img src="pictures/secret-deleted-automatically.PNG" alt="key creation" style="zoom:50%;" />
 
 ### Bringing it all together
 
-Now that we have our secret securely stored in keyvault and syncing with our Kubernetes secrets. lets deploy the rest of the microservice to ensure everything works as expected. We begin by increasing the number of nodes in our cluster to ensure we have enough resources
+Now that we have our secret securely stored in keyvault and syncing with our Kubernetes secrets. lets deploy the rest of the microservice to ensure everything works as expected. We begin by deleting the objects in the ratingsapp namespace since we dont need them anymore
 
 ```bash
-az aks scale --resource-group $RESOURCE_GROUP \
-	--name $AKS_CLUSTER_NAME \
-	--node-count 4 \
-	--nodepool-name <nodepool name>
+kubectl delete -f ratings-web-service.yaml -n ratingsapp
+kubectl delete -f ratings-web-deployment.yaml -n ratingsapp
+kubectl delete -f ratings-api-service.yaml -n ratingsapp
+```
+
+```
+helm uninstall ratings --namespace ratingsapp
 ```
 
 1. We create the mongodb pods using helm like we did during the workshop but this time in the default namespace
@@ -609,7 +633,7 @@ az aks scale --resource-group $RESOURCE_GROUP \
 
    ```bash
    kubectl apply -f ratings-web-service.yaml
-   ratings-api-service.yaml
+   kubectl apply -f ratings-api-service.yaml
    ```
 
 5. Finally we view the services so that we can get the public ip of the web service
