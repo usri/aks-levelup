@@ -165,8 +165,8 @@ spec:
   replicas: 10
 
 # Navigate back to root
-cd..
-cd..
+cd ..
+cd ..
 
 # Write customizations to screen. Note that the number of replicas are 10 and the namespace is production.
 kubectl kustomize overlays/production
