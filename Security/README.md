@@ -23,11 +23,11 @@ In this tutorial we will be using Azure CLI and Azure Portal to manage the Azure
 
 You need to complete these two steps before starting out on the assignments
 
-1. Setup environmental variables. You can get your cluster name from Azure portal and enter it below.
+1. Setup environmental variables. You can get your cluster name from Azure portal and enter it below. If you followed the instruction in the AKS workshop, your AKC cluster resource group name should be *aksworkshop*
 
       ```bash
       REGION_NAME=eastus
-      RESOURCE_GROUP=aksworkshop
+      RESOURCE_GROUP=<aks resource group name>
       SUBNET_NAME=aks-subnet
       VNET_NAME=aks-vnet
       AKS_CLUSTER_NAME=<cluster name>
@@ -43,7 +43,9 @@ You need to complete these two steps before starting out on the assignments
       	--disable-cluster-autoscale
       ```
 
-3. Scale to two nodes in your cluster if you haven't already. An example of nodepool name is *nodepool1*
+3. Scale to two nodes in your cluster if you haven't already. An example of nodepool name is *nodepool1*. To check the name of your nodepool go to Azure portal go to your kubernetes cluster in the portal, click on **Node pools** in the left pane under *Settings* and you should find the name of your nodepool there under the *Name* column.
+
+   ![authorized ip error](Network-Security/pictures/nodepool-name.PNG)
 
    ```bash
    az aks scale --resource-group $RESOURCE_GROUP \
@@ -59,13 +61,13 @@ You need to complete these two steps before starting out on the assignments
    --resource-group $RESOURCE_GROUP \
    --name $AKS_CLUSTER_NAME
    ```
-   
+
 5. Install the preview extension of Azure CLI
 
       ```bash
       az extension add --name aks-preview
       ```
-      
+
 6. Clone the required repository for this workshop and cd to the proper folder
 
       ```bash

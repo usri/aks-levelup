@@ -19,7 +19,6 @@ RESOURCE_GROUP=aksworkshop
 SUBNET_NAME=aks-subnet
 VNET_NAME=aks-vnet
 AKS_CLUSTER_NAME=<cluster name>
-AKS_CLUSTER_NAME=aksworkshop-12320
 ```
 
 Get credentials for your AKS cluster
@@ -80,9 +79,19 @@ In this section, we will focus on the second option, since the workshop already 
 
    this will give you the base-64 encoded URL
 
-   
+   > VERY IMPORTANT: When you copy the output of the previous command amd paste it in the myconnectionstring.yaml file ensure the encoded string is 1 line with no space inbetween. 
+   >
+   > If it ends with "GIK" replace the last 3 strings with "GI=". 
 
-4. Next you edit the secret definition manifest file manually by adding your encrypted connection string to the file and save it in a file called *myconnectionstring.yaml*
+4. Next you edit the secret definition manifest file manually by adding your encrypted connection string to the file and save it in a file called *myconnectionstring.yaml*. First switch to the appropriate folder for this module. If you haven't already, clone the repo as well. Replace <your encrypted connection string> with your modified encoded string.
+
+   ```
+   git clone https://github.com/mosabami/aks-adv-workshop-yaml-files
+   ```
+
+   ```bash
+   cd aks-adv-workshop-yaml-files/key-vault-yaml-files
+   ```
 
    ```bash
    code myconnectionstring.yaml
@@ -117,18 +126,6 @@ Kubernetes offers two ways of linking your secrets to your application
 Mounting secrets is the best way to consume secrets in your application and we will go over why
 
 #### Secrets and Environment variables
-
-We begin by cloning the repo that has the Kubernetes manifest files in it and cd into the proper folder
-
-```bash
-git clone https://github.com/mosabami/aks-adv-workshop-yaml-files.git
-```
-
-```
-cd aks-adv-workshop-yaml-files/key-vault-yaml-files
-```
-
-
 
 You can configure a pod with environment variable secrets. This was done during the workshop and we will repeat the steps here using the secret created using the yaml file. We begin by recreating the old deployment manifest file for the  ratings-api which is in the folder you just cloned from GitHub. Edit it with the code below or by using your favorite editor
 
@@ -194,10 +191,9 @@ One thing to note is that any application can use the secret values by referenci
 
 #### Secrets as files
 
-Let's take a look at how to mount the same secrets as files rather than environment
-variables:
+Let's take a look at how to mount the same secrets as files rather than environment variables:
 
-Create a edit the file *ratings-api-deployment-files.yaml* by replacing <acr name> with your actual ACR name
+Edit the file *ratings-api-deployment-files.yaml* by replacing <acr name> with your actual ACR name
 
 ```bash
 code ratings-api-deployment-files.yaml
@@ -209,7 +205,11 @@ Apps that get secrets as files require special code which is beyond the scope of
 kubectl apply -f ratings-api-deployment-files.yaml --namespace ratingsapp
 ```
 
-Get the pod name using the instructions above for the pod that starts with ratings-api-files and exec into the pod 
+Get the pod name using the instructions above for the pod that starts with ratings-api-files and exec into the pod. It should start with **ratings-api-files**
+
+```bash
+kubectl get pods -n ratingsapp
+```
 
 ```bash
 kubectl exec -it <pod name> --namespace ratingsapp -- sh
@@ -229,20 +229,30 @@ cat MONGOCONNECTION
 
 <img src="pictures/file-secret.PNG" alt="create user group" style="zoom:50%;" />
 
+Delete this deployment since it will no longer be used
+
+```bash
+kubectl delete -f ratings-api-deployment-files.yaml --namespace ratingsapp
+```
+
+
+
 #### Why secrets as files is the better of the two
 
-Run the following command to see secrets in plain text in the docker runtime
+Run the following command to see secrets in plain text in the docker runtime. Get the vmss instance number
 
 ```
 kubectl get pods --namespace ratingsapp
-kubectl describe pod <ratings-api pod name> | grep Node
-kubectl describe pod ratings-api-66d4676885-ltz4l | grep Node
+```
+
+```
+kubectl describe pod <ratings-api pod name> -n ratingsapp | grep Node
 ```
 
 Now get Docker ID of the running pod
 
 ```bash
-kubectl describe pod secret-using-env | grep 'Container ID'
+kubectl describe pod <ratings-api pod name> -n ratingsapp | grep 'Container ID' 
 ```
 
 <img src="pictures/container-docker.PNG" alt="create user group" style="zoom:50%;" />
@@ -250,8 +260,8 @@ kubectl describe pod secret-using-env | grep 'Container ID'
 Finally, you will execute a command on the node running your container to show the secret that was passed as an environment  variable. First, let's set a couple of variables you'll use later
 
 ```
-INSTANCE=1
-DOCKERID=4747641d2f599e96cf31bf466dd2b3f189cf2f3d0c76dad7e99fd9be2b5267f3
+INSTANCE=<vmss instance number>
+DOCKERID=<docker id>
 VMSS=$(az vmss list --query '[].name' -o tsv)
 RGNAME=$(az vmss list --query '[].resourceGroup' -o tsv)
 ```
@@ -283,7 +293,7 @@ As you can see the secrets are decoded in the container runtime which means most
 
 ## Secrets using Key Vault Provider for Secrets Store CSI Driver
 
-In the previous section we stored secrets using a file in a pod and showed why it is the best option. However there are situations where you cant modify the code to get secrets from files and need to use an environmental variable, like in the case of our Fruit Smoothie deployment. 
+In the previous section we stored secrets using a file in a pod and showed why it is the best option. However there are situations where you can't modify the code to get secrets from files and need to use an environmental variable, like in the case of our Fruit Smoothie deployment. 
 
 You saw in the previous section that base64-encoded secrets are not secure at all. For highly secure environments, you will want to use a better secret store. Azure offers an industry-compliant key and secret storage solution called Azure Key Vault. Microsoft maintains the Key Vault implementation of the Secret Store CSI driver, named Azure Key Vault provider for Secrets Store CSI driver. This implementation allows you as a user to access Key Vault secrets from within Kubernetes. It is also integrated with pod identities to restrict access to secrets. 
 
@@ -309,13 +319,21 @@ It is recommended that you use a managed identity to link your Kubernetes cluste
 
 5. Once the resource has been create click **Go to resource** button
 
-6. In the resulting page, click on **Properties** in the left pane and save the *Resource ID* since you will need it later. Below is an example of what the *Resource ID* should look like
+6. In the resulting page, click on **Properties** in the left pane and save the *Resource ID* since you will need it later. 
+
+   ```bash
+   RESOURCE_ID=<Resource ID>
+   ```
+
+   Below is an example of what the *Resource ID* should look like
 
    ```bash
    RESOURCE_ID=/subscriptions/f37c6be5-84d0-4994-b205-fc8ffb9b5e7e/resourceGroups/csi-key-vault/providers/Microsoft.ManagedIdentity/userAssignedIdentities/csi-to-key-vault
    ```
 
-7. Next we will link the pod-identity with the aks cluster as we did in the [Azure AD pod-managed identities on AKS](../Security-with-AAD-pod-managed-identities/README.md) section.
+7. Next we will link the pod-identity with the aks cluster as we did in the [Azure AD pod-managed identities on AKS](../Security-with-AAD-pod-managed-identities/README.md) section. If you haven't enabled pod-identity in your cluster yet, you need to do that by following the instructions in that section, it is part of the first few commands. 
+
+   > You need to enable AKS-managed Azure Active Directory before you enable a pod-managed identity. This topic was covered in the [Security with RBAC](../Security-with-RBAC/README.md) section
 
    ```bash
    az aks pod-identity add --resource-group $RESOURCE_GROUP \
@@ -347,7 +365,13 @@ It is recommended that you use a managed identity to link your Kubernetes cluste
 
 2. Click the **+ New** button to start the creation process
 
-3. Provide details required, using the same resource group you created in the previous step. Your form should look like the picture below
+3. Provide details required, using the same resource group you created in the previous step. Your form should look like the picture below. Note if you want to purge a soft-deleted keyvault, enter the command below
+
+   ```
+   az keyvault purge --name <keyvault name>
+   ```
+
+   
 
    <img src="pictures/create-key-vault.PNG" alt="create user group" style="zoom:50%;" />
 
@@ -357,7 +381,7 @@ It is recommended that you use a managed identity to link your Kubernetes cluste
 
 6. Click on **Access policies** in the left pane under *Settings*
 
-7. Click on **+ Add Access Policy**
+7. Click on **+ Add Access Policy** link in the middle of the page
 
    <img src="pictures/add-access-policy.PNG" alt="add access policy" style="zoom:50%;" />
 
@@ -373,15 +397,15 @@ It is recommended that you use a managed identity to link your Kubernetes cluste
 
 13. Click **Add** 
 
-14. Click on **Save** at the bottom of the resulting page to complete the process
+14. Click on **Save** at the top of the resulting page to complete the process
 
     <img src="pictures/add-identity.PNG" alt="add access policy" style="zoom:50%;" />
 
 ### Create Secret
 
-1. Click on **Keys** in the left pane and hit the **Generate/Import** button
+1. Click on **Secrets** in the left pane and hit the **Generate/Import** button
 
-2. In the secret creation wizard, provide the details about your secret. To make this demonstration easier to follow, use the name k8s-secret-demo. Provide the value of the secret which should be the connection string you used in the previous section eg
+2. In the secret creation wizard, provide the details about your secret. To make this demonstration easier to follow, use the name k8s-secret-demo. Provide the value of the secret which should be the connection string you used in the previous section 
 
    ```
    mongodb://azureuser:<password>@ratings-mongodb.ratingsapp:27017/ratingsdb
@@ -441,7 +465,7 @@ We begin by creating a new SecretProviderClass in your cluster
    az account show --query tenantId
    ```
 
-2. Next modify the *secretproviderclass-file.yaml* file by providing the tenantId you just obtained
+2. Next modify the *secretproviderclass-file.yaml* file by providing the tenantId you just obtained and the keyvault name
 
    ```
    code secretproviderclass-file.yaml
