@@ -23,7 +23,7 @@ In this tutorial we will be using Azure CLI and Azure Portal to manage the Azure
 
 You need to complete these two steps before starting out on the assignments
 
-1. Setup environmental variables. You can get your cluster name from Azure portal and enter it below. If you followed the instruction in the AKS workshop, your AKC cluster resource group name should be *aksworkshop*
+1. Setup environmental variables. You can get your cluster name from Azure portal and enter it below. If you followed the instruction in the AKS workshop, your AKS cluster resource group name should be *aksworkshop*
 
       ```bash
       REGION_NAME=eastus
@@ -62,13 +62,50 @@ You need to complete these two steps before starting out on the assignments
    --name $AKS_CLUSTER_NAME
    ```
 
-5. Install the preview extension of Azure CLI
+5. Delete the horizontal pod autoscaler
+
+      ```
+      code ratings-api-hpa.yaml
+      ```
+
+      Copy this manifest code into the file and save it with *Ctrl + s*
+
+      ```yaml
+      apiVersion: autoscaling/v2beta2
+      kind: HorizontalPodAutoscaler
+      metadata:
+        name: ratings-api
+      spec:
+        scaleTargetRef:
+          apiVersion: apps/v1
+          kind: Deployment
+          name: ratings-api
+        minReplicas: 1
+        maxReplicas: 10
+        metrics:
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 30
+      ```
+
+      Delete the resource
+
+      ```bash
+      kubectl delete -f ratings-api-hpa.yaml --namespace ratingsapp
+      ```
+
+      
+
+6. Install the preview extension of Azure CLI if you haven't already
 
       ```bash
       az extension add --name aks-preview
       ```
 
-6. Clone the required repository for this workshop and cd to the proper folder
+7. Clone the required repository for this workshop and cd to the proper folder
 
       ```bash
       git clone https://github.com/mosabami/aks-adv-workshop-yaml-files
