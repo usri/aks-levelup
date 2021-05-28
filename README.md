@@ -46,7 +46,8 @@ The agenda for this workshop is as follows:
 | 11:15 AM | Break |
 | 11:25 AM | [Service mesh - Istio ](./ServiceMesh/readme.md) |
 | 12:15 PM | [Security](./Security/README.md) |
-| 1:30 PM | [Enterprise Scale for AKS Demo](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline) |
+| 1:15PM | [Enterprise Scale for AKS Demo](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline) |
+| 1:30 PM | End of Workshop |
 
 
 ## Support

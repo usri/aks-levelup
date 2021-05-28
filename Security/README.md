@@ -5,7 +5,7 @@ This section contains hands-on assignments that will help you secure an AKS work
 - Network Security in AKS
 - Role Based Access Control on AKS
 - Azure AD pod-managed identities on AKS
-- Storing Secrets in AKS (still under development)
+- Storing Secrets in AKS 
 
 In this tutorial we will be using Azure CLI and Azure Portal to manage the Azure resources. 
 
@@ -81,7 +81,7 @@ You can then proceed to begin the following modules in whatever order you see fi
 1. [Network and Image Security](./Network-Security/README.md)
 2. [Security with RBAC](./Security-with-RBAC/README.md)
 3. [Security with AAD pod-managed identities](./Security-with-AAD-pod-managed-identities/README.md)
-4. [Storing Secrets with Secrets Store CSI Driver (Still under development)](./Storing-secrets-securely/README.md)
+4. [Storing Secrets with Secrets Store CSI Driver](./Storing-secrets-securely/README.md)
 
 ## Next step
 
