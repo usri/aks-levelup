@@ -24,6 +24,7 @@ This module will guide you through the tutorials below to give you hands-on expe
 The following are required to successfully complete this module.
 
 - Azure Subscription (commercial or government)
+- Bash shell - Ubuntu, Mac, Windows (WSL), Azure Portal (cloud-shell)
 - An AKS instance 
 
 ## Tutorial: Pod storage
