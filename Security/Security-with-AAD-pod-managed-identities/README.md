@@ -229,7 +229,7 @@ Now that the storage account has been created and linked to our cluster, we can 
 1. Create the new pod using the same image but without access to the managed identity called no-access-blob
 
     ```bash
-    kubectl create -f deployment-without-identity.yaml
+    kubectl apply -f deployment-without-identity.yaml
     ```
 
 1. Get the name of the new pod when it is in the *Running* state

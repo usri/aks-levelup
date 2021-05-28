@@ -46,7 +46,7 @@ Next we will get the IP address of your terminal and allowlist it
 To get the IP address of your current terminal execute the following command:
 
 ```bash
-curl icanhazip.com
+curl ipv4.icanhazip.com
 ```
 
 Now replace the the placeholder IP address you used earlier *10.0.0.0* with your terminal's IP address in the **Networking** section of your control plane
