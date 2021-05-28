@@ -4,7 +4,7 @@
 
 Applications/workloads running in Kubernetes often times have requirements to store data that the application depends on.  For example, if you were to run a containerized version of WordPress or Drupal on Kubernetes, the static content (ie: blogs, pictures, etc.) would be stored on a local file system.  To support applications with such requirements in Kubernetes, we rely on Kubernetes resources, such as [persistent volumes (PV)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/), [persistent volune claims (PVC)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims), and [storage classes (SC)](https://kubernetes.io/docs/concepts/storage/storage-classes/).
 
-This module will guide you through the tutorials below to give you hands-on experience configuring and using persistent volumes/claims and storage classes.
+This module will guide you through the tutorials below to give you hands-on experience configuring and using persistent volumes/claims and storage classes.  You will start by examining the simplest storage, which is ephemeral _pod_ storage.  Next, you will got through some laborious exercises to statically configure _node_ storage and then _shared_ storage.  The reason you will do these laborious and error-proned exercises is so that you can understand and appreciate what is happening when you _dyanamically_ request storage for your applications, which is the recommended pattern for configuring storage on your cluster.  Finally, the last tutorial will guide you through the steps to expand a volume to allocate more storage for your applications.
 
 - [Pod storage](#tutorial-pod-storage)
 - [Node storage (static)](#tutorial-node-storage-static)
@@ -18,7 +18,7 @@ This module will guide you through the tutorials below to give you hands-on expe
 The following are required to successfully complete this module.
 
 - Azure Subscription (commercial or government)
-- An AKS instance resulting from the [Azure Kubernetes Service Workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/).  
+- An AKS instance 
 
 ## Tutorial: Pod storage
 _(10 minutes)_
@@ -207,7 +207,7 @@ kubectl get pods --output wide
 # For example, it will be something like 'aks-nodepool1-13512373-vmss000003'
 
 # Drain the node that has all the 'Running' pods.  This makes the node unavailable for pod scheduling.
-kubectl drain [node name] --ignore-daemonsets
+kubectl drain [node name] --ignore-daemonsets --delete-emptydir-data
 
 # Refresh the page in your browser - observe that "Hi there!" is returned.
 
@@ -240,7 +240,7 @@ az disk delete --ids $DISK_RESOURCE_ID --yes
 
 ### Summary
 
-In this tutorial, you learned how an [azureDisk volume](https://kubernetes.io/docs/concepts/storage/volumes/#azuredisk) can be used to provide storage at the node level.  As a result, you were able to observe that when a pod is deleted, data that was previously written to the volume is not lost.  You also observed a limitation with this kind of volume, which is, it can only be attached to a single node at a time.  This is by design.  However, there is a way enable simultaneous RW access to a volume form multiple nodes.  You will learn how to do that in the next tutorial.
+In this tutorial, you learned how an [azureDisk volume](https://kubernetes.io/docs/concepts/storage/volumes/#azuredisk) can be used to provide storage at the node level.  As a result, you were able to observe that when a pod is deleted, data that was previously written to the volume is not lost.  You also observed a limitation with this kind of volume, which is, it can only be attached to a single node at a time.  This is by design.  However, there is a way enable simultaneous RW access to a volume from multiple nodes.  You will learn how to do that in the next tutorial.
 
 ## Tutorial: Shared Storage (static)
 _(10 minutes)_
@@ -391,7 +391,7 @@ Therefore, a Kubernetes best practice is to let Kubernetes [dynamically provisio
 ## Tutorial: Shared storage (dynamic)
 _(10 minutues)_
 
-In previous tutorials, you observed how a `persistentVolume` binds to peristent storage, such as an Azure Disk or Azure File Share.  Recall that in those tutorial, you had to manually create the persistent storage and define a persistent volume to bind to it.  And in the case of Azure File storage, you also had to create a kubernetes secret containing the keys to access the storage account.  
+In previous tutorials, you observed how a `persistentVolume` binds to peristent storage, such as an Azure Disk or Azure File Share.  Recall that in those tutorials, you had to manually create the persistent storage and define a persistent volume to bind to it.  And in the case of shared Azure File storage, you also had to create a kubernetes secret containing the keys to access the storage account.  
 
 The previous tutorials, while technically feasible, do not represent best practices for attaching and using persistent volumes from your pod. As you have observed, manually creating persistent storage and configuring them for use is tedious work and prone to error.  There is a better way, which is to _dynamically_ create the persistent storage and volume.  This approach is also a [documented best practice](https://docs.microsoft.com/en-us/azure/aks/operator-best-practices-storage#dynamically-provision-volumes).  You will learn how to do this in this tutorial.
  
@@ -441,7 +441,7 @@ kubectl delete -f ./05-shared-storage.yaml
 
 ### Summary
 
-In this tutorial, you learned how to configure a `persistentVolumeClaim` to dymically provision a `persistenVolume` and the underlying storage for your aplication to use.  The key to enabling this was to simply specify a _storageClass_ in the `persistentVolumeClaim.  Everything else was taken care of for you, including
+In this tutorial, you learned how to configure a `persistentVolumeClaim` to dymically provision a `persistentVolume` and the underlying storage for your aplication to use.  The key to enabling this was to simply specify a _storageClass_ in the `persistentVolumeClaim.  Everything else was taken care of for you, including
 
 - Creating the storage account
 - Creating the file share in the storage account
@@ -490,20 +490,13 @@ kubectl logs [failed pod name]
 # Need to expand the volume, which we can do because the azurefile storage class supports volume expansion by default.
 # Show this in the yaml
 
-# edit the pvc to increase the size from 5GB to 8GB
-kubectl edit pvc file-storage-claim
-# This will open VIM editor
-# move cursor on top of '5' in the 'storage' section spec.  Type 'r8', then ':wq' to save the change.
-# Now the pvc has been expanded to 8GB
+# Edit the pvc in ./06-volume-expansion.yaml -- increase the size from 5GB to 8GB.
+# Save the file.
 
-# Delete the failed pod 
-kubectl delete pod [failed pod name]
+# Apply the change to the deployment
+kubectl apply -f ./06-volume-expansion.yaml
 
-# Notice that Kubernetes scheduled a new pod so your replicaset is at 11 and all the pods are running.  This time, it doesn't fail.
-kubectl get rs
-kubectl get pods -o wide
-
-# observe the new file created in the share
+# Observe that the pod that was failing is now able to create it's file in the file share.
 
 # Scale out the replicas to 14.
 kubectl scale deployment dynamic-shared-storage --replicas=14
@@ -516,14 +509,7 @@ kubectl get pods
 kubectl delete -f ./06-volume-expansion.yaml
 ```
 
-## Wrap up
+### Summary
 
-To do...
+In this tutorial, you learned how to expand the amount of storage your application needs by updating the `resources.requests.storage` property in the `persistentVolumeClaim` definition.
 
-```bash
-
-# Re-enable the cluster autoscaler
-az aks update --resource-group fruit-smoothies-rg --name fruit-smoothies-6485-aks --enable-cluster-autoscaler --min-count 1 --max-count 3
-
-# (optional) Delete the storage accounts that were dynamically created
-```
