@@ -513,7 +513,7 @@ We begin by creating a new SecretProviderClass in your cluster
    
    
    
-   <img src="pictures/got-kv-secret.PNG" alt="key creation" style="zoom:50%;" />
+   <img src="pictures/got-kv-secret.png" alt="key creation" style="zoom:50%;" />
 
 
 
@@ -575,7 +575,7 @@ As mentioned at the begining of this section there are times when we cannot modi
    echo $MONGODB_URI
    ```
 
-   <img src="pictures/result-env-option.PNG" alt="key creation" style="zoom:50%;" />
+   <img src="pictures/result-env-option.png" alt="key creation" style="zoom:50%;" />
 
 9. Now you can check to see it listed as one of the secrets
 

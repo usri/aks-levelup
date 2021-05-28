@@ -65,6 +65,8 @@ Now your control plane can only be accessed from a terminal with your IP address
 >
 > To do that, uncheck **Set authorized IP ranges** and hit save at the top.
 
+**Don't forget to disable Set authorized IP ranges**
+
 ### Securing using a private cluster
 
 You can also limit public access to your control plane by deploying a private cluster. This cluster can be accessed only via a private endpoint called a **Private Link**. Private clusters need to be enabled at the time the cluster is created so we will not be going into details on this here in this workshop. You can find documentation on how to implement this here: [Create a private Azure Kubernetes Service cluster - Azure Kubernetes Service | Microsoft Docs](https://docs.microsoft.com/azure/aks/private-clusters) or in Chapter 11 of the free book [Hands-on Kubernetes on Azure](https://aka.ms/handson-aks-book).
@@ -317,7 +319,7 @@ You can see that a rule that allows traffic from the defined IP address has been
 ### Securing using Kubernetes Network Policies
 
 It is good practice to limit traffic between pods in the same cluster. That way, if an attacker somehow gains access to a pod in the cluster, they don't necessarily have direct access to other pods within that cluster. Network policies help with that and AKS makes applying them very easy. Network policies however need to be enabled at the time of creating the cluster, so for the purpose of this workshop we will not be going into details here. For AKS, you can either use Azure network policies or Calico network policies. Check find documentation for network policies here: [Secure pod traffic with network policy - Azure Kubernetes Service | Microsoft Docs](https://docs.microsoft.com/azure/aks/use-network-policies) or in the [Hands-on Kubernetes on Azure](https://www.packtpub.com/product/hands-on-kubernetes-on-azure-third-edition/9781801079945) book.
- 
+
 Always start with a zero-trust network policy for each namespace, and then expand with Ingress and Egress network rules from that point.  Example zero-trust network policies can be found in the [AKS Baseline for Regulated Workloads](https://github.com/mspnp/aks-baseline-regulated).
 
 ### Cleanup
@@ -357,7 +359,7 @@ Follow the steps below to enable this feature.
 
 1. Click on **Azure Defender on**
 
-   ![enable container scan](pictures/enable-container-scan.png)
+   ![enable container scan](pictures/enable-container-scan.PNG)
 
 ### View and Remediate Findings
 
@@ -367,7 +369,7 @@ Follow the steps below to enable this feature.
 
 1. If issues were found, you'll see the recommendation **Vulnerabilities in Azure Container Registry images should be remediated**. In this case as shown in the picture below, there are none.
 
-   ![view recommendations](pictures/view-recommendations.png)
+   ![view recommendations](pictures/view-recommendations.PNG)
 
 ## Next step
 
