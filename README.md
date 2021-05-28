@@ -39,7 +39,7 @@ The agenda for this workshop is as follows:
 | --- | --- |
 | 9:00 AM | Workshop Kickoff |
 | 9:10 AM | [Storage - Persistent Volumes, Claims, & Storage Classes](./storage/README.md) |
-| 10:25 AM | [Kustomize](./Kustomize/readme.md) |
+| 10:25 AM | [Kustomize](./Kustomize/README.md) |
 | 11:15 AM | Break |
 | 11:25 AM | [Service mesh - Istio ](./ServiceMesh/readme.md) |
 | 12:15 PM | [Security](./security/readme.md) |
