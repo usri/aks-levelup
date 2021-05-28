@@ -84,7 +84,7 @@ namespace: uat
 resources:
   - 01-pod-storage.yaml
 
-# use &lt;ctrl&gt;&lt;D&lt; to save and exit the new file
+# use ctl-c to save and exit the new file
 # Return to root of project
 cd ..
 
