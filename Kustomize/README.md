@@ -14,7 +14,7 @@ This module will guide you through the tutorial below to give you hands-on exper
 
 _(5 minutes)_
 
-In this tutorial, you will deploy a simple YAML from the [PVC](/storage/readme.md) demo. The workload is a simple NGNIX container with no customizations. Make sure you have the [01-pod-storage.yaml](././storage/01-pod-storage.yaml).
+In this tutorial, you will deploy a simple YAML from the [PVC](/storage/README.md) demo. The workload is a simple NGNIX container with no customizations. Make sure you have the [01-pod-storage.yaml](/storage/01-pod-storage.yaml).
 
 ### Step-by-step instructions
 
