@@ -4,6 +4,12 @@
 
 Applications/workloads running in Kubernetes often times have requirements to store data that the application depends on.  For example, if you were to run a containerized version of WordPress or Drupal on Kubernetes, the static content (ie: blogs, pictures, etc.) would be stored on a local file system.  To support applications with such requirements in Kubernetes, we rely on Kubernetes resources, such as [persistent volumes (PV)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/), [persistent volune claims (PVC)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims), and [storage classes (SC)](https://kubernetes.io/docs/concepts/storage/storage-classes/).
 
+The graphic below illustrates the relationship between a pod, PVC, PV, and Kubernetes.
+
+
+![Kubernetes PV/PVC overview](./images/k8s-volumes.png)
+
+
 This module will guide you through the tutorials below to give you hands-on experience configuring and using persistent volumes/claims and storage classes.  You will start by examining the simplest storage, which is ephemeral _pod_ storage.  Next, you will got through some laborious exercises to statically configure _node_ storage and then _shared_ storage.  The reason you will do these laborious and error-proned exercises is so that you can understand and appreciate what is happening when you _dyanamically_ request storage for your applications, which is the recommended pattern for configuring storage on your cluster.  Finally, the last tutorial will guide you through the steps to expand a volume to allocate more storage for your applications.
 
 - [Pod storage](#tutorial-pod-storage)
@@ -18,6 +24,7 @@ This module will guide you through the tutorials below to give you hands-on expe
 The following are required to successfully complete this module.
 
 - Azure Subscription (commercial or government)
+- Bash shell - Ubuntu, Mac, Windows (WSL), Azure Portal (cloud-shell)
 - An AKS instance 
 
 ## Tutorial: Pod storage
