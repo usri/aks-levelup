@@ -41,9 +41,9 @@ The agenda for this workshop is as follows:
 | 9:10 AM | [Storage - Persistent Volumes, Claims, & Storage Classes](./storage/README.md) |
 | 10:25 AM | [Kustomize](./kustomize/readme.md) |
 | 11:15 AM | Break |
-| 11:25 AM | [Service mesh - Istio ](./ServiceMesh/readme.md) |
-| 12:15 PM | [Security](./security/readme.md) |
-| 1:30 PM | End of workshop |
+| 11:25 AM | [Service mesh - Istio ](./ServceMesh/readme.md) |
+| 12:15 PM | [Security](./Security/readme.md) |
+| 1:30 PM | [Enterprise Scale for AKS Demo](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline) |
 
 
 ## Support
