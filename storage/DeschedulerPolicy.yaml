@@ -1,0 +1,5 @@
+apiVersion: "apps/v1"
+kind: "DeschedulerPolicy"
+strategies:
+  "RemoveDuplicates":
+     enabled: false

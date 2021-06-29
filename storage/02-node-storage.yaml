@@ -35,4 +35,4 @@ spec:
           azureDisk:
             kind: Managed
             diskName: pv-static-disk
-            diskURI: <your disk URI>
+            diskURI: /subscriptions/xxxxxxxxxxxxxx/resourceGroups/MC_Istio-Sandbox_istio-demo-1_eastus/providers/Microsoft.Compute/disks/pv-static-disk

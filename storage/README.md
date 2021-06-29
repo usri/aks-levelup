@@ -122,8 +122,8 @@ Before you apply this deployment to your cluster, there are a few items that nee
 az login
 
 # Define some environment variables
-AKS_WORKSHOP_RG="[your aks-workhsop resource group name]"
-AKS_WORKSHOP_CLUSTER="[your aks-workhsop cluster name]"
+AKS_WORKSHOP_RG="[your aks-workshop-resource group name]"
+AKS_WORKSHOP_CLUSTER="[your aks-workshop cluster name]"
 AKS_WORKSHOP_NODE_RG=$(az aks show --resource-group $AKS_WORKSHOP_RG --name $AKS_WORKSHOP_CLUSTER --query nodeResourceGroup -o tsv)
 
 # Disable the cluster autoscaler.
