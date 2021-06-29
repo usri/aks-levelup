@@ -12,7 +12,33 @@ The following are required to participate in this workshop.
 
 - Azure Subscription (commercial or government)
 - An AKS instance resulting from the [Azure Kubernetes Service Workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/).
-  - Some of the modules below will extend your existing AKS instance.
+  - The _Security_ module will extend your existing fruit smoothies rating application.
+
+If you do not have an AKS instance as mentioned above, then you can still participate in the 1st three topics with another AKS instance. If you need to create a new AKS instance, then you can do so quickly using the following commands:
+
+```bash
+# Sign-in to your subscription if you're not already signed-in.
+az login
+
+# Create the resource group for AKS
+az group create --name levelup-rg --location eastus
+
+# Creat the AKS cluster
+az aks create --resource-group levelup-rg --name levelup-aks --node-count 2 --generate-ssh-keys
+
+# Merge AKS credentials into ./kube/config, so you can run kubectl commands.
+az aks get-credentials --resource-group levelup-rg --name levelup-aks
+
+# Clone the github repo with the needed files
+git clone https://github.com/usri/aks-levelup.git
+```
+
+## We want your feedback!
+
+Please provide some feedback on this workshop here:
+
+[FY21 Q4 LevelUP Learner Survey – Advanced AKS May 2021](https://forms.office.com/pages/responsepage.aspx?id=v4j5cvGGr0GRqy180BHbRzbGReTz_QJAsEsSBGtDGzFUOUQ0SkZaUExUSEJGTDFBT1VZVEpDSlJRVy4u)
+
 ## Agenda
 
 The agenda for this workshop is as follows:
@@ -20,16 +46,37 @@ The agenda for this workshop is as follows:
 | Time (CST) | Topic |
 | --- | --- |
 | 9:00 AM | Workshop Kickoff |
-| 9:15 AM | [Storage - Persistent Volumes, Claims, & Storage Classes](./storage/README.md) |
-| 10:30 AM | Kustomize |
-| TODO | Break |
-| TODO | Service mesh - Istio |
-| TODO | Security |
-| TODO | End of workshop |
+| 9:10 AM | [Storage - Persistent Volumes, Claims, & Storage Classes](./storage/README.md) |
+| 10:25 AM | [Kustomize](./Kustomize/README.md) |
+| 11:15 AM | Break |
+| 11:25 AM | [Service mesh - Istio ](./ServiceMesh/readme.md) |
+| 12:15 PM | [Security](./Security/README.md) |
+| 1:15PM | [Enterprise Scale for AKS Demo](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline) |
+| 1:30 PM | End of Workshop |
 
 
 ## Support
 
-During the live presentation of this workshop a team of procotors are available to support you and answer questions.  Instructions on how to engage with the proctors during the live event are below.
+During the live presentation of this workshop a team of procotors are available to support you and answer questions.  Instructions on how to engage with the proctors during the live event will be conveyed at that time.
 
-TODO...
+**Presenters:**
+
+Rick Rainey
+
+Rob Vettor
+
+Dan Biscup
+
+Eldon Gormsen
+
+Ayobami Ayodewji
+
+**Coaches:**
+
+Chad Kittel
+
+Jonathan Wang
+
+Greg Roe
+
+Mark Kizhnerman

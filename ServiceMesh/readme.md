@@ -11,7 +11,7 @@ A  [service mesh](https://docs.microsoft.com/dotnet/architecture/cloud-native/re
 - Policy enforcement
 - Observability
 
-A service mesh decouples infrastructure capabilities from the application. It moves infrastructure plumbing from the application services to a a *proxy* container that is injected alongside each of the application service containers. This side-by-side architecture is referred to as a [sidecar](https://docs.microsoft.com/azure/architecture/patterns/sidecar). Although a separate component, a sidecar proxy is *loosely coupled* (or linked) to its corresponding service - the sidecar is created with the application service and shares its lifecycle.
+A service mesh decouples infrastructure capabilities from the application. It moves infrastructure plumbing from the application services to a *proxy* container that is injected alongside each of the application service containers. This side-by-side architecture is referred to as a [sidecar](https://docs.microsoft.com/azure/architecture/patterns/sidecar). Although a separate component, a sidecar proxy is *loosely coupled* (or linked) to its corresponding service - the sidecar is created with the application service and shares its lifecycle.
 
 Figure 1 shows an example of a service mesh architecture.
 
@@ -45,9 +45,9 @@ The installation involves several steps. The instructions presented are a subset
 
 ### Install the Istio client binary
 
-You'll start by installing the *Istioctl CLI* into your client. Similar to the Kubernetes, *kubectl* CLI, istioctl is needed to install and manage Istio within an AKS cluster.
+You will start by installing the *Istioctl CLI* into your client. Similar to the Kubernetes, *kubectl* CLI, istioctl may be used to install and manage Istio within an AKS cluster.
 
-To complete this lab, you'll use the Azure Cloud Shell. It's an interactive, authenticated, browser-accessible shell for managing Azure resources, including AKS. Conveniently, it's built into the Azure portal and is preloaded with many of the Azure libraries you'll need. It provides both a Bash and PowerShell CLI experience.
+To complete this lab, you'll use the Azure Cloud Shell. It's an interactive, authenticated, browser-accessible shell for managing Azure resources, including AKS. Conveniently, it's built into the Azure portal and is preloaded with many of the Azure libraries you will need. It provides both a Bash and PowerShell CLI experience.
 
 Logon to the [Azure Portal](https://ms.portal.azure.com/). Once loaded, open up an Azure Cloud Shell session by clicking on the Cloud Shell icon in the top navigation menu as shown in figure 2.
 
@@ -67,7 +67,7 @@ The binary runs on the client machine enabling you to install and manage Istio i
 
 The following commands will download and install the Istioctl client binary into your CloudShell instance. It'll be available immediately (in the current shell) and permanently (across shell restarts) via your PATH.
 
-Use the following command to load identity credentials for your AKS cluster. You'll need to provide your resource group and cluster name.
+Use the following command to load identity credentials for your AKS cluster. You will need to provide your resource group and cluster name.
 
 ```Bash
 az aks get-credentials --resource-group RG-NAME --name CLUSTERNAME
@@ -95,7 +95,7 @@ cd istio-X.X.X # Replace X.X.X. with the Istio version number
 export PATH=$PWD/bin:$PATH
 ```
 
-Next, you'll use the Istioctl CLI to install Istio into your AKD cluster:
+Next, you will use the Istioctl CLI to install Istio into your AKS cluster:
 
 ``` bash
 istioctl install
@@ -130,142 +130,6 @@ NAME                                                       REFERENCE            
 horizontalpodautoscaler.autoscaling/istio-ingressgateway   Deployment/istio-ingressgateway   3%/80%    1         5         1          4h15m
 horizontalpodautoscaler.autoscaling/istiod                 Deployment/istiod                 0%/80%    1         5         1          4h15m
 ```
-
-### Additional Configuration
-
-There's some additional configuration that needs to happen.
-
-Run the following command to take a look at the current state of istio for the Fruit Smoothies application:
-
-```bash
- istioctl analyze -n ratingsapp
-```
-
-> Note: The *ratingsapp* namespace is the location in which you previously deployed the fruit smoothies application.
-
-You will see some error and warning messages:
-
-```bash
-Warn [IST0102] (Namespace ratingsapp) The namespace is not enabled for Istio injection. Run 'kubectl label namespace ratingsapp istio-injection=enabled' to enable it, or 'kubectl label namespace ratingsapp istio-injection=disabled' to explicitly mark it as not needing injection
-Info [IST0118] (Service ratings-api.ratingsapp) Port name  (port: 80, targetPort: 3000) doesn't follow the naming convention of Istio port.
-Info [IST0118] (Service ratings-web.ratingsapp) Port name  (port: 80, targetPort: 8080) doesn't follow the naming convention of Istio port.
-Error: Analyzers found issues when analyzing namespace: ratingsapp.
-```
-
-To resolve these messages, you'll need to add an Istio *automated-injection* label to the namespace in which the Fruit Smoothies application is running. By doing so, Istio will inject an Istio proxy sidecar to all pods deployed in this namespace. The following command adds that label to Fruit Smoothies application namespace:
-
-```bash
-kubectl label namespace ratingsapp istio-injection=enabled
-```
-
-Once complete, you'll need to update both the ratings-api-service.yaml and ratings-web-service.yaml files as shown here:
-
-> You'll add the line **name: tcp** to the bottom of the ports section in each of the yaml files. The line must be lowercase and pay close attention to spacing.
-
-The resulting YAML file should look like the following:
-
-```yaml
-    ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
-      name: tcp  # <-- add this line and make sure spacing correct and all lowercase.
-```
-
-Now, you need to redeploy both services:
-
-```bash
-kubectl apply --namespace ratingsapp -f ratings-api-service.yaml
-
-kubectl apply --namespace ratingsapp -f ratings-web-service.yaml
-```
-
-Run the Istioctl analyze command again to verify everything is setup correctly.
-
-```bash
- istioctl analyze -n ratingsapp
-```
-
-Notice the output. Everything is set up correctly, but there are still warnings that the istio side-car proxies have not been setup.
-
-```bash
-Warn [IST0103] (Pod ratings-api-84d457f946-lvd2h.ratingsapp) The pod is missing the Istio proxy. This can often be resolved by restarting or redeploying the workload.
-Warn [IST0103] (Pod ratings-mongodb-54bd7b4784-42xhb.ratingsapp) The pod is missing the Istio proxy. This can often be resolved by restarting or redeploying the workload.
-Warn [IST0103] (Pod ratings-web-77876c96d8-kbglz.ratingsapp) The pod is missing the Istio proxy. This can often be resolved by restarting or redeploying the workload.
-Error: Analyzers found issues when analyzing namespace: ratingsapp.
-```
-
-Since the deployment was done before Istio was installed and configured, you'll need to redeploy the pods.  One approach would be to delete the pods. The Kubernetes deployment will then automatically recreate them.
-
-First, use the following command to get the name of pods to delete:
-
-```bash
-kubectl get pods -n ratingsapp
-```
-
-You should see three pods:
-
-```bash
-NAME                               READY   STATUS    RESTARTS   AGE
-ratings-api-84d457f946-lvd2h       1/1     Running   0          154m
-ratings-mongodb-54bd7b4784-42xhb   1/1     Running   0          5h48m
-ratings-web-77876c96d8-kbglz       1/1     Running   0          151m
-```
-
-Now delete the three pods. Run the following command three times replacing the names of pods with those from the above command.
-
-```bash
-kubectl delete -n ratingsapp pod <your POD-NAMEs>
-```
-
-Once complete, run the following command to view the newly-create pods:
-
-```bash
-kubectl get pods -n ratingsapp
-```
-
-You should see three pods. Notice, however, that two containers (the application service and Istio sidecar) are now running in each pod (the **2/2** number under the **ready** the header):
-
-```bash
-NAME                               READY   STATUS    RESTARTS   AGE
-ratings-api-84d457f946-gnv2p       2/2     Running   1          118s
-ratings-mongodb-54bd7b4784-t77l9   2/2     Running   0          86s
-ratings-web-77876c96d8-nbw9p       2/2     Running   0          57s
-```
-
-Run the following the command to inspect one the pods. Replace the **POD-NAME** with the full name of one the pods for the previous command.
-
-```bash
-kubectl describe -n ratingsapp pod <POD-NAME>
-```
-
-You will see a large amount of metadata information about this pod.  Find the **Containers section**. There, you'll see a container named 'istio-proxy' and its related information:
-
-```bash
-  istio-proxy:
-    Container ID:  containerd://f6192e62d3d8e47caf5cc8675b96cf81a2b9a900c2c492299b55e26404924039
-    Image:         docker.io/istio/proxyv2:1.9.5
-    Image ID:      docker.io/istio/proxyv2@sha256:01fc76f6dd3665ff1dd4aa9e309e4b02380fa266763e172ca07c766e8d2fe2d7
-    Port:          15090/TCP
-    Host Port:     0/TCP
-    Args:
-      proxy
-      sidecar
-      --domain
-      $(POD_NAMESPACE).svc.cluster.local
-      --serviceCluster
-      ratings-web.$(POD_NAMESPACE)
-      --proxyLogLevel=warning
-      --proxyComponentLogLevel=misc:error
-      --log_output_level=default:info
-      --concurrency
-      2
-    State:          Running
-      Started:      Wed, 19 May 2021 02:02:19 +0000
-    Ready:          True
-```
-
-Congratulations!  You have successfully installed Istio and configured the Fruit Smoothies app to use it.
 
 ## Tutorial: Canary Releases with Isito
 
@@ -335,6 +199,23 @@ ratings-app       Active   90d     istio-injection=enabled
 ```
 
 Note the *istio-injection=enabled* label in the bookinfo namespace.
+
+Now run the Istioctl analyze command to verify everything is setup correctly.
+
+```bash
+ istioctl analyze -n bookinfo
+```
+
+
+Clone the _book info_ sample application.
+
+```bash
+# Clone the istio repo, which includes the sample application
+git clone https://github.com/istio/istio.git
+
+# Naviagate into the istio folder
+cd istio
+```
 
 Next, deploy the BookInfo application.
 
@@ -447,7 +328,7 @@ Finally, copy and paste the $GATEWAY_URL value into Notepad on your computer. Yo
 
 The traffic routing features of Istio enables you to specify routing rules that control traffic flow between frontend APIs and backend services. Included are service-level properties that support A/B testing, canary rollouts, and staged rollouts with percentage-based traffic splits. It also provides built-in failure recovery features to make your application more robust against failures of dependent services or the network.
 
-Two key features for traffic routing are Istio *destination rules* and *virtual services*.
+Two resources for traffic routing are Istio *destination rules* and *virtual services*.
 ## Apply destination rules
 
 Before you can use Istio to control routing to a specific version of the BookInfo application, you'll need to define the available versions, called subsets, using Istio destination rules.
