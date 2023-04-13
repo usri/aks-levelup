@@ -219,7 +219,8 @@ cd istio
 
 Next, deploy the BookInfo application.
 
-> Remember to add the *--namespace bookinfo* to end of each command!
+> Remember to add the *--namespace bookinfo* to end of each command! Alternatively, run `kubectl config set-context --namespace bookinfo --current`
+
 
 ```bash
 kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml --namespace bookinfo
@@ -468,6 +469,35 @@ Refresh the browser. Now the stars are gone. This is because only traffic for th
 
 Congratulations. You have successfully configured Istio to route traffic based on user identity.
 
+## Optional: view the dashboard
+
+Istio integrates with [several](https://istio.io/latest/docs/ops/integrations/) telemetry applications. These can help you gain an understanding of the structure of your service mesh, display the topology of the mesh, and analyze the health of your mesh.
+
+Install Kiali and the other addons and wait for them to be deployed:
+```bash
+kubectl apply -f samples/addons
+kubectl rollout status deployment/kiali -n istio-system
+```
+
+Access the Kiali dashboard:
+> Note: To forward the dashboard to your local browser, you must run this command in your local terminal. Run `az aks get-credentials --resource-group RG-NAME --name CLUSTERNAME` in your local terminal to get the credentials for your cluster.
+
+```bash
+ istioctl dashboard kiali
+```
+
+In the left navigation menu, select Graph and in the Namespace drop down, select bookinfo.
+Send some requests to the productpage service:
+
+```bash
+for i in $(seq 1 100); do curl -s -o /dev/null "http://$GATEWAY_URL/productpage"; done
+```
+
+The Kiali dashboard shows an overview of your mesh with the relationships between the services in the Bookinfo sample application. It also provides filters to visualize the traffic flow.
+
+<img src="./images/kiali.png" width="800" />
+
+
 ## Other Service Meshes
 ### Linkerd
 
@@ -476,7 +506,7 @@ Update the ratings app namespace to inject istio side-cars
 
 ### Microsoft's Open Service Mesh
 
-Microsoft's [Open Service Mesh (OSM)](https://docs.microsoft.com/azure/aks/servicemesh-osm-about?pivots=client-operating-system-linux) is a lightweight, extensible, Cloud Native service mesh that allows users to uniformly manage, secure, and get out-of-the-box observability features for highly dynamic microservice environments. It's designed as a "lighter-weight" version of Istio.
+Microsoft's [Open Service Mesh (OSM)](https://learn.microsoft.com/en-us/azure/aks/open-service-mesh-about) is a lightweight, extensible, Cloud Native service mesh that allows users to uniformly manage, secure, and get out-of-the-box observability features for highly dynamic microservice environments. It's designed as a "lighter-weight" version of Istio.
 
 Similar to Istio, OSM runs an Envoy-based control plane on Kubernetes, can be configured with SMI APIs, and works by injecting an Envoy proxy as a sidecar container next to each instance of your application. The Envoy proxy executes rules specified in access control policies, implements routing configuration, and captures metrics. The control plane continually configures proxies to ensure policies and routing rules are up to date and ensures proxies are healthy.
 
@@ -487,7 +517,6 @@ Currently, Open Service Mesh is in preview mode.
 The resources below provide additional information about service meshes.
 
 - [About service meshes](https://docs.microsoft.com/azure/aks/servicemesh-about)
-- [Istio Architecture](https://istio.io/latest/docs/ops/deployment/architecture/)
 - [Install and use Istio in Azure Kubernetes Service](https://docs.microsoft.com/en-us/azure/aks/servicemesh-istio-install?pivots=client-operating-system-linux)
 - [Istio Architecture](https://istio.io/latest/docs/ops/deployment/architecture/)
 - [What's a service mesh?](https://www.redhat.com/en/topics/microservices/what-is-a-service-mesh)
