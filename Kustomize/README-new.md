@@ -6,7 +6,7 @@ Kubernetes relies on YAML for deployment definitions. As you applications grow a
 
 [kustomize](https://kustomize.io/#overview) is built-in to kubectl and assists in managing templates.
 
-The main concepts in Kustomize are "base" and "overlays" ([terms](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/)). The idea is to have a "base" desired state such as "UAT (User Acceptance Testing)" where the YMAL might include a small node pool and ingress. Built on top of the base template, you can then create multiple overlay templates that extend or modify the base template for a specific environment. For example, you might have a "production overlay" where you have a large cluster in a different namespace.
+The main concepts in Kustomize are "base" and "overlays" ([terms](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/)). The idea is to have a "base" desired state such as "UAT (User Acceptance Testing)" where the YAML might include a small node pool and ingress. Built on top of the base template, you can then create multiple overlay templates that extend or modify the base template for a specific environment. For example, you might have a "production overlay" where you have a large cluster in a different namespace.
 
 This module will guide you through the tutorial below to give you hands-on experience configuring and using Kustomize to templatize a YAML workload.
 
@@ -14,15 +14,25 @@ This module will guide you through the tutorial below to give you hands-on exper
 
 _(5 minutes)_
 
-In this tutorial, you will deploy a simple YAML from the [PVC](/storage/README.md) demo. The workload is a simple NGNIX container with no customizations. Make sure you have the [01-pod-storage.yaml](/storage/01-pod-storage.yaml).
+In this tutorial, you will deploy a web server. The workload is a simple NGNIX container with no customizations. 
 
 ### Step-by-step instructions
 
-Execute the commands below from a bash command shell. Assure you are in the directory with your YAML.
+To complete this lab, you'll use the Azure Cloud Shell. It's an interactive, authenticated, browser-accessible shell for managing Azure resources, including AKS. Conveniently, it's built into the Azure portal and is preloaded with many of the Azure libraries you will need. It provides both a Bash and PowerShell CLI experience.
 
+Logon to the [Azure Portal](https://ms.portal.azure.com/). Once loaded, open up an Azure Cloud Shell session by clicking on the Cloud Shell icon in the top navigation menu as shown in figure 2.
+
+![cloud-shell-launch-icon](./images/cloud-shell-launch-icon.png)
+
+**Figure 2**. Azure Cloud Shell launch icon
+
+Next, select the **Bash** CLI from the drop-down list box in the upper left-hand corner as shown below in Figure 3.
+![cloud-shell-experience](./images/select-shell-drop-down.png)
+
+Execute the command below: 
 
 ```bash
-cat > deployment-frontend.yaml <<EOF
+cat > frontend-deployment.yaml <<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -43,23 +53,23 @@ spec:
         - containerPort: 80
 EOF
 ```
-
-
+This will create a frontend-deployment.yaml in the current directory.
+Next, add the deployment to the cluster.
 
 ```bash
 # Apply deployment to the cluster
-kubectl apply -f 01-pod-storage.yaml
+kubectl apply -f frontend-deployment.yaml
 
 # List the pod that was created, make sure they are created and running
 kubectl get pods
 
 # Delete the deployment
-kubectl delete -f 01-pod-storage.yaml
+kubectl delete -f frontend-deployment.yaml
 ```
 
 ### Summary
 
-In this tutorial, we redeployed the 01-pod-storage as our baseline for our kustomize project.
+In this tutorial, we deployed an nginx webserver as our baseline for our kustomize project.
 
 ## Tutorial: Create a UAT environment template
 
@@ -71,6 +81,7 @@ A quick word on [namespaces](https://kubernetes.io/docs/concepts/overview/workin
 
 The basics steps include:
 
+- Create a uat namespace
 - Move your base template to a directory
 - Create a kustomization.yaml file to contain changes you wish to make
 - Deploy to file or cluster
@@ -87,11 +98,9 @@ kubectl create ns uat
 # You should now see UAT in the list
 kubectl get ns
 
-# Create a directory to hold your base image
-mkdir uat
-
-# Copy the 01-pod-storage.yaml to this directory. This will be our "base"
-cp 01-pod-storage.yaml uat
+# Create a directory to hold your base image and copy the frontend-deployment.yaml file to it.
+This file will be our "base" template.
+mkdir uat && cp frontend-deployment.yaml uat
 
 # Navigate to the overlays directory
 cd uat
@@ -102,15 +111,16 @@ cat > kustomization.yaml
 # Add the following directives to the new file. Note that type, or kind,
 # is a Kustomization. The change you wish to make is renaming the namespace
 # in the new deployment to UAT.
+cat > kustomization.yaml <<EOF
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: uat
 
 resources:
-  - 01-pod-storage.yaml
+  - frontend-deployment.yaml
+EOF
 
-# use ctl-c to save and exit the new file
 # Return to root of project
 cd ..
 
@@ -135,7 +145,7 @@ kubectl get pods -n uat
 
 ### Summary
 
-In this step you learned about isolating deployments in their own namespaces with Kustomize. You extended the base template by creating an overlay template with a different namesapce, UAT. You also learned how to display and persist the customized template. You also deployed the customization directly to the cluster.
+In this step you learned about isolating deployments in their own namespaces with Kustomize. You extended the base template by creating an overlay template with a different namespace, UAT. You also learned how to display and persist the customized template. You also deployed the customization directly to the cluster.
 
 ## Tutorial: Create production environment template, namespace and scale
 
@@ -160,18 +170,17 @@ kubectl create ns production
 # You should now see production in the list
 kubectl get ns
 
-# Create a directory to hold overlays
-mkdir overlays
+# Create a directory structure for overlays and environments and cd to the production folder
+mkdir -p overlays/{production,acceptance} && cd overlays/production
 
-# Navigate to the overlays directory
-cd overlays
+```
 
-# Create a Production folder
-mkdir production
+This will create the following folder structure:
 
-# Navigate to the Production folder
-cd production
 
+
+
+```bash
 # Create a kustomization file named kustomization.yaml. Add the following directives to it:
 # You can also use the Visual Studio Code plug built-in to CloudShell. Simply type: "Code ."
 bases:
