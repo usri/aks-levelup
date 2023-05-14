@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Kubernetes relies on YAML for deployment definitions. As applications grow and more services, application and namespaces are added, these YAML definitions can become hard to manage. 
+Kubernetes relies on YAML files for deployment definitions. As applications grow and more services, application and namespaces are added, these YAML definitions can become hard to manage. 
 
 [kustomize](https://kustomize.io/#overview) is built-in to kubectl and assists in managing templates.
 
