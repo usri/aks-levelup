@@ -2,13 +2,13 @@
 
 ## Introduction
 
-Kubernetes relies on YAML for deployment definitions. As you applications grow and more services, application and namespaces are added, these YAML definitions can become hard to manage. Add several different environments such as UAT and Production and DevOps, mistakes to your cluster are inevitable. 
+Kubernetes relies on YAML for deployment definitions. As applications grow and more services, application and namespaces are added, these YAML definitions can become hard to manage. 
 
 [kustomize](https://kustomize.io/#overview) is built-in to kubectl and assists in managing templates.
 
-The main concepts in Kustomize are "base" and "overlays" ([terms](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/)). The idea is to have a "base" desired state where the YAML files might include a deployments, services and ingresses. Built on top of the base template, you can then create multiple overlay templates that extend or modify the base template for a specific environment. For example, you might have a "production overlay" where you have a large cluster in a different namespace.
+The main concepts in Kustomize are "base" and "overlays" ([terms](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/)). The idea is to have a "base" desired state that might include deployments, services and ingresses. Built on top of the base template, you can then create multiple overlay templates that extend or modify the base template for a specific environment. 
 
-A Kustomize directory structure looks like this:
+Below is an example of a Kustomize directory structure:
 
 ```
 base
