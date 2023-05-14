@@ -175,7 +175,7 @@ You will see the following output. Note the namespace is uat.
 
 ![kustomize-output](./images/kustomize-uat-output.png)
 
-You can persist the output by running `kubectl kustomize overlays/uat > output.yaml`
+If you want, you can optionally persist the output by running `kubectl kustomize overlays/uat > output.yaml`
 
 Apply the customization directly to the cluster (note the -k option)
 
@@ -223,10 +223,9 @@ cd # change to your home folder
 mkdir -p overlays/production && cd overlays/production
 ```
 
+Again, create a kustomization file named kustomization.yaml. This time the namespace is 'production'. The file defines which base configuration to reference and which patch files are used. 
 
 ```bash
-# Create a kustomization file named kustomization.yaml with the following directives:
-
 cat > kustomization.yaml <<EOF
 resources:
 - ../../base
