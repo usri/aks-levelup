@@ -175,7 +175,7 @@ You will see the following output. Note the namespace is uat.
 
 ![kustomize-output](./images/kustomize-uat-output.png)
 
-If you want, you can optionally persist the output by running `kubectl kustomize overlays/uat > output.yaml`
+If you want, you can optionally persist the output by running `kubectl kustomize overlays/uat > ~/output.yaml`
 
 Apply the customization directly to the cluster (note the -k option)
 
@@ -245,7 +245,12 @@ metadata:
 spec:
   replicas: 10
 EOF
+```
 
+To confirm the patch config file changes are correct before applying to the cluster, let's run `kubectl kustomize` again and check the oupput.
+When all is well, we can apply the files to the production namespaces:
+
+```bash
 # Navigate back your home folder
 cd
 
